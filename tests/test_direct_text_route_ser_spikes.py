@@ -105,5 +105,5 @@ def audit_direct_text_route_ser_spikes(model_source: str | Path) -> dict[str, ob
 
 
 def test_direct_text_route_ser_head_and_spike_firing() -> None:
-    yaml_path = ROOT / "ultralytics/cfg/models/26/yoloe-26n-snn2-seg22-2-direct-text-route-ser.yaml"
+    yaml_path = ROOT / "ultralytics/cfg/models/26/omnispike-26-snn2-seg22-2-direct-text-route-ser.yaml"
     audit_direct_text_route_ser_spikes(yaml_path)

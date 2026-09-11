@@ -56,12 +56,31 @@ A small-data training smoke script is also retained at:
 
 It is intended only for a local smoke test after the reviewer supplies the dataset and selects an output directory.
 
+## Predict, train, and val entry points
+
+The reviewer-facing entry points use the included checkpoint by default:
+
+```powershell
+python predict.py --source path/to/image.jpg --classes person,car
+python val.py --data path/to/dataset.yaml
+python train.py --data path/to/dataset.yaml --epochs 1
+```
+
+Their default outputs go to the system temporary directory rather than `runs/`. For an offline code-and-weight smoke test
+without downloading the optional 242 MB MobileCLIP text encoder, add `--offline-smoke` to each command. This mode checks
+the model, checkpoint, data loader, forward pass, validation loop, and one training epoch with deterministic random text
+features; it is not a semantic-accuracy evaluation.
+
 ## Main files
 
 | Purpose | Path |
 |---|---|
 | Target model configuration | `ultralytics/cfg/models/26/omnispike-text-route-bira-reg16.yaml` |
 | SNN model head | `ultralytics/nn/modules/head.py` |
+| Prediction entry point | `predict.py` |
+| Validation entry point | `val.py` |
+| Training entry point | `train.py` |
+| Reviewer checkpoint | `weights/omnispike-text-route-ser-best.pt` |
 | Text-route SER | `ultralytics/nn/modules/text_guided_ser.py` |
 | SNN backbone/neck blocks | `ultralytics/nn/modules/yolo_spikformer.py` |
 | YAML parser and module registration | `ultralytics/nn/tasks.py` |
@@ -73,4 +92,3 @@ It is intended only for a local smoke test after the reviewer supplies the datas
 The data YAMLs in this repository are small smoke-test configurations. Formal COCO/LVIS reproduction requires the reviewer’s own licensed/downloaded datasets and the corresponding checkpoint or training setup. Paths are intentionally not hard-coded to the original local machine.
 
 This project retains the upstream Ultralytics license and notices. Please review the upstream license terms before redistribution.
-
