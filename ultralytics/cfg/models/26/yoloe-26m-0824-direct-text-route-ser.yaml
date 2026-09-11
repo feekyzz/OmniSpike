@@ -1,0 +1,53 @@
+# Ultralytics AGPL-3.0 License - https://ultralytics.com/license
+
+# 0824 Direct Text-Route SER 的 M 规模配置。
+# 相比原 0824 YAML：
+#   1. reg_max: 1 -> 16，恢复 SpikeYOLO/YOLO 系列的 DFL 回归粒度；
+#   2. P5 第25层 MS_ConvBlock 的 mlp_ratio: 1 -> 2，对齐 SpikeYOLO M 的设置。
+# 注意：该文件仍然是 YOLOE + Text-SER + Segment22.2，不是原始 SpikeYOLO 检测头。
+# 文件名中的 `yoloe-26m` 让 Ultralytics 自动选择 scales.m。
+nc: 80
+scale: m
+end2end: True
+reg_max: 16
+text_model: mobileclip2:b
+scales:
+  n: [0.33, 0.375, 1024]
+  s: [0.33, 0.5, 1024]
+  m: [0.5, 0.625, 1024]
+  l: [0.5, 0.75, 1024]
+
+backbone:
+  - [-1, 1, MS_GetT, [3, 1]]
+  - [-1, 1, MS_DownSampling, [128, 7, 4, 2, True]]
+  - [-1, 3, MS_AllConvBlock, [4, 7]]
+  - [-1, 1, MS_DownSampling, [256, 3, 2, 1, False]]
+  - [-1, 6, MS_AllConvBlock, [4, 7]]
+  - [-1, 1, MS_DownSampling, [512, 3, 2, 1, False]]
+  - [-1, 9, MS_ConvBlock, [3, 7]]
+  - [-1, 1, MS_DownSampling, [1024, 3, 2, 1, False]]
+  - [-1, 3, MS_ConvBlock, [2, 7]]
+  - [-1, 1, SpikeSPPF, [1024, 5]]
+
+head:
+  - [-1, 1, MS_StandardConv, [512, 1, 1]]
+  - [-1, 1, nn.Upsample, [None, "(1,2,2)", "nearest"]]
+  - [-1, 1, MS_ConvBlock, [3, 7]]
+  - [[-1, 6], 1, Concat, [2]]
+  - [-1, 1, MS_StandardConv, [256, 1, 1]]
+  - [-1, 1, nn.Upsample, [None, "(1,2,2)", "nearest"]]
+  - [-1, 1, MS_AllConvBlock, [4, 7]]
+  - [[-1, 4], 1, Concat, [2]]
+  - [-1, 1, MS_StandardConv, [256, 1, 1]]
+  - [-1, 1, MS_AllConvBlock, [4, 7]]
+  - [-1, 1, MS_StandardConv, [256, 3, 2]]
+  - [[-1, 14], 1, Concat, [2]]
+  - [-1, 1, MS_ConvBlock, [3, 7]]
+  - [-1, 1, MS_StandardConv, [512, 3, 2]]
+  - [[-1, 10], 1, Concat, [2]]
+  # M 版关键修改：0824 原来是 [1, 7]，这里改为 [2, 7]。
+  - [-1, 1, MS_ConvBlock, [2, 7]]
+
+  # P4/P5 使用 0824 的 Direct Text-Route SER；Proto 和 mask 分支保持 Segment22.2。
+  # args: [nc, nm, npr, embed, with_bn, heads, windows, topk, candidate_pool, visual_keep]
+  - [[19, 22, 25], 1, YOLOESNNSegment22_2DirectTextRouteSER, [nc, 32, 256, 512, True, 8, 7, 4, 8, 2]]

@@ -1,0 +1,9 @@
+# Minimal KITTI subset used only for smoke-testing the YOLOE-SNN training loop.
+path: D:\a3.datasets\KITTI
+train: D:\a4.YOLO\yolo26-snnworld\kitti_smoke_train.txt
+val: D:\a4.YOLO\yolo26-snnworld\kitti_smoke_val.txt
+
+names:
+  0: Car
+  1: Cyclist
+  2: Pedestrain

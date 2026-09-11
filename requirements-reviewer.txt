@@ -1,0 +1,6 @@
+spikingjelly
+timm
+einops
+torchinfo
+git+https://github.com/ultralytics/CLIP.git
+

@@ -1,0 +1,49 @@
+# Ultralytics AGPL-3.0 License - https://ultralytics.com/license
+
+# 0824 Direct Text-Route SER 的 S 规模 DFL 对照配置。
+# 与原 0824 S 配置相比只恢复 reg_max=16；end2end、Layer 25 和 SER 参数均保持不变。
+nc: 80
+scale: s
+end2end: True
+reg_max: 16
+text_model: mobileclip2:b
+scales:
+  n: [0.33, 0.375, 1024]
+  s: [0.33, 0.5, 1024]
+  m: [0.5, 0.625, 1024]
+  l: [0.5, 0.75, 1024]
+
+backbone:
+  - [-1, 1, MS_GetT, [3, 1]]
+  - [-1, 1, MS_DownSampling, [128, 7, 4, 2, True]]
+  - [-1, 3, MS_AllConvBlock, [4, 7]]
+  - [-1, 1, MS_DownSampling, [256, 3, 2, 1, False]]
+  - [-1, 6, MS_AllConvBlock, [4, 7]]
+  - [-1, 1, MS_DownSampling, [512, 3, 2, 1, False]]
+  - [-1, 9, MS_ConvBlock, [3, 7]]
+  - [-1, 1, MS_DownSampling, [1024, 3, 2, 1, False]]
+  - [-1, 3, MS_ConvBlock, [2, 7]]
+  - [-1, 1, SpikeSPPF, [1024, 5]]
+
+head:
+  - [-1, 1, MS_StandardConv, [512, 1, 1]]
+  - [-1, 1, nn.Upsample, [None, "(1,2,2)", "nearest"]]
+  - [-1, 1, MS_ConvBlock, [3, 7]]
+  - [[-1, 6], 1, Concat, [2]]
+  - [-1, 1, MS_StandardConv, [256, 1, 1]]
+  - [-1, 1, nn.Upsample, [None, "(1,2,2)", "nearest"]]
+  - [-1, 1, MS_AllConvBlock, [4, 7]]
+  - [[-1, 4], 1, Concat, [2]]
+  - [-1, 1, MS_StandardConv, [256, 1, 1]]
+  - [-1, 1, MS_AllConvBlock, [4, 7]]
+  - [-1, 1, MS_StandardConv, [256, 3, 2]]
+  - [[-1, 14], 1, Concat, [2]]
+  - [-1, 1, MS_ConvBlock, [3, 7]]
+  - [-1, 1, MS_StandardConv, [512, 3, 2]]
+  - [[-1, 10], 1, Concat, [2]]
+  # S 规模保持原 0824 的 Layer 25 配置，不应用 M 规模的 [2, 7]。
+  - [-1, 1, MS_ConvBlock, [1, 7]]
+
+  # P4/P5经Text-SER和MS_ConvBlock后直接替换，并由分类、回归及mask coefficient共享。
+  # args: [nc, nm, npr, embed, with_bn, heads, windows, topk, candidate_pool, visual_keep]
+  - [[19, 22, 25], 1, YOLOESNNSegment22_2DirectTextRouteSER, [nc, 32, 256, 512, True, 8, 7, 4, 8, 2]]

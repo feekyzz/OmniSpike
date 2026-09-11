@@ -1,0 +1,51 @@
+# Ultralytics AGPL-3.0 License - https://ultralytics.com/license
+
+# Experiment 2:
+# SNN backbone only. Convert backbone outputs to ANN before the neck, then run a standard ANN YOLOE neck + YOLOEDetect.
+# This isolates whether the SNN neck is the part that destroys open-vocabulary semantic alignment.
+nc: 80
+end2end: True
+reg_max: 1
+text_model: mobileclip2:b
+scales:
+  n: [0.33, 0.375, 1024]
+  s: [0.33, 0.5, 1024]
+  m: [0.5, 0.625, 1024]
+  l: [0.5, 0.75, 1024]
+
+backbone:
+  - [-1, 1, MS_GetT, [3, 1]]
+  - [-1, 1, MS_DownSampling, [128, 7, 4, 2, True]]
+  - [-1, 3, MS_AllConvBlock, [4, 7]]
+  - [-1, 1, MS_DownSampling, [256, 3, 2, 1, False]]
+  - [-1, 6, MS_AllConvBlock, [4, 7]]
+  - [-1, 1, MS_DownSampling, [512, 3, 2, 1, False]]
+  - [-1, 9, MS_ConvBlock, [3, 7]]
+  - [-1, 1, MS_DownSampling, [1024, 3, 2, 1, False]]
+  - [-1, 3, MS_ConvBlock, [2, 7]]
+  - [-1, 1, SpikeSPPF, [1024, 5]]
+
+head:
+  # Convert backbone feature taps to ANN before entering the neck.
+  - [-1, 1, MS_CancelT, [1]]   # 10: P5 in BCHW
+  - [6, 1, MS_CancelT, [1]]    # 11: P4 in BCHW
+  - [4, 1, MS_CancelT, [1]]    # 12: P3 in BCHW
+
+  # Standard ANN YOLOE neck.
+  - [10, 1, nn.Upsample, [None, 2, "nearest"]]
+  - [[-1, 11], 1, Concat, [1]]
+  - [-1, 2, C3k2, [512, True]]   # 15
+
+  - [-1, 1, nn.Upsample, [None, 2, "nearest"]]
+  - [[-1, 12], 1, Concat, [1]]
+  - [-1, 2, C3k2, [256, True]]   # 18 (P3)
+
+  - [-1, 1, Conv, [256, 3, 2]]
+  - [[-1, 15], 1, Concat, [1]]
+  - [-1, 2, C3k2, [512, True]]   # 21 (P4)
+
+  - [-1, 1, Conv, [512, 3, 2]]
+  - [[-1, 10], 1, Concat, [1]]
+  - [-1, 1, C3k2, [1024, True, 0.5, True]]  # 24 (P5)
+
+  - [[18, 21, 24], 1, YOLOEDetect, [nc, 512, True]]

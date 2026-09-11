@@ -1,0 +1,47 @@
+# datasets
+datasets/
+data/
+!ultralytics/data/
+!ultralytics/data/**
+
+# training outputs
+runs/
+wandb/
+logs/
+fuwuqi/
+
+# local artifact workspaces and generated outputs
+/outputs/
+.artifact-work/
+node_modules/
+
+
+# weights
+*.pt
+*.pth
+mobileclip*.ts
+*.onnx
+*.engine
+
+# logs
+*.log
+
+# cache
+*.cache
+__pycache__/
+*.pyc
+
+# vscode
+.vscode/
+
+# tensorboard
+events.out.tfevents*
+
+# local reviewer-only analysis workspace
+z/
+.reviewer_config/
+
+# IDE
+.idea/
+.vscode/
+

@@ -1,0 +1,51 @@
+# Ultralytics AGPL-3.0 License - https://ultralytics.com/license
+# YOLOE-26 SNN open-vocabulary object detection model with P3/8 - P5/32 outputs.
+# 中文说明：
+# 1. backbone / neck 保持在 SNN 时序域里计算；
+# 2. 最后的 YOLOESNNDetect 会在 head 内部完成时间维聚合；
+# 3. 文本提示、视觉提示、loss、validator 仍复用原 YOLOE 逻辑。
+# Parameters
+nc: 80
+end2end: True
+reg_max: 1
+scales:
+  # [depth, width, max_channels]
+  n: [0.33, 0.375, 1024]  # SpikeYOLOn 13.2M
+  s: [0.33, 0.5, 1024]  # SpikeYOLOs 23.1M
+  m: [0.5, 0.625, 1024]   # SpikeYOLOm 48M #layer 25 should be changed into:  [-1, 1, MS_ConvBlock, [2,7]]
+  l: [0.5, 0.75, 1024]
+
+backbone:
+  - [-1, 1, MS_GetT, [3, 1]]
+  - [-1, 1, MS_DownSampling, [128, 7, 4, 2, True]]
+  - [-1, 3, MS_AllConvBlock, [4, 7]]
+  - [-1, 1, MS_DownSampling, [256, 3, 2, 1, False]]
+  - [-1, 6, MS_AllConvBlock, [4, 7]]
+  - [-1, 1, MS_DownSampling, [512, 3, 2, 1, False]]
+  - [-1, 9, MS_ConvBlock, [3, 7]]
+  - [-1, 1, MS_DownSampling, [1024, 3, 2, 1, False]]
+  - [-1, 3, MS_ConvBlock, [2, 7]]
+  - [-1, 1, SpikeSPPF, [1024, 5]]
+
+head:
+  - [-1, 1, MS_StandardConv, [512, 1, 1]]
+  - [-1, 1, nn.Upsample, [None, "(1,2,2)", "nearest"]]
+  - [-1, 1, MS_ConvBlock, [3, 7]]
+  - [[-1, 6], 1, Concat, [2]]
+
+  - [-1, 1, MS_StandardConv, [256, 1, 1]]
+  - [-1, 1, nn.Upsample, [None, "(1,2,2)", "nearest"]]
+  - [-1, 1, MS_AllConvBlock, [4, 7]]
+  - [[-1, 4], 1, Concat, [2]]
+  - [-1, 1, MS_StandardConv, [256, 1, 1]]
+  - [-1, 1, MS_AllConvBlock, [4, 7]]
+
+  - [-1, 1, MS_StandardConv, [256, 3, 2]]
+  - [[-1, 14], 1, Concat, [2]]
+  - [-1, 1, MS_ConvBlock, [3, 7]]
+
+  - [-1, 1, MS_StandardConv, [512, 3, 2]]
+  - [[-1, 10], 1, Concat, [2]]
+  - [-1, 1, MS_ConvBlock, [1, 7]]
+
+  - [[19, 22, 25], 1, SpikeDetect, [nc]]
