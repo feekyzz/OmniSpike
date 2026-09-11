@@ -49,7 +49,7 @@ Install the project and its reviewer-facing dependencies with:
 
 ```powershell
 python -m pip install -e .
-python -m pip install -r requirements-reviewer.txt
+python -m pip install -r requirements.txt
 ```
 
 ## Usage
@@ -84,6 +84,13 @@ of this release.
 ## Weights
 
 The pretrained OmniSpike weights can be downloaded from [Google Drive](https://drive.google.com/file/d/1AY8dCsL_1-RV-vStaYOe6D74Y5COflP1/view?usp=drive_link).
+
+下载完成后，请将 `.pt` 权重文件直接拖入本项目的 `weights/` 文件夹，并将文件名保持为：
+
+`omnispike-text-route-ser-best.pt`
+
+After placing the checkpoint in `weights/`, the prediction, training, and validation scripts will find it by default.
+If a different filename is used, pass its path explicitly with `--weights path/to/your_checkpoint.pt`.
 
 ## Model Configuration
 
