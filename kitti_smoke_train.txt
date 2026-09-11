@@ -1,8 +1,0 @@
-D:\a3.datasets\KITTI\images\train\000000.jpg
-D:\a3.datasets\KITTI\images\train\000002.jpg
-D:\a3.datasets\KITTI\images\train\000004.jpg
-D:\a3.datasets\KITTI\images\train\000005.jpg
-D:\a3.datasets\KITTI\images\train\000006.jpg
-D:\a3.datasets\KITTI\images\train\000008.jpg
-D:\a3.datasets\KITTI\images\train\000009.jpg
-D:\a3.datasets\KITTI\images\train\000013.jpg

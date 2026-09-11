@@ -1,4 +1,0 @@
-D:\a3.datasets\KITTI\images\val\000001.jpg
-D:\a3.datasets\KITTI\images\val\000003.jpg
-D:\a3.datasets\KITTI\images\val\000007.jpg
-D:\a3.datasets\KITTI\images\val\000010.jpg
