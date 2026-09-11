@@ -1,64 +1,71 @@
-# YOLOE-26 SNN Direct Text-Route SER
+# OmniSpike
 
-This repository is a clean reviewer-facing copy of the YOLOE-26 SNN instance-segmentation implementation centered on the S-scale configuration:
+## Overview
 
-`ultralytics/cfg/models/26/omnispike-text-route-bira-reg16.yaml`
+<p align="center">
+  <img src="assets/omnispike_overview.jpg" alt="Overview of OmniSpike" width="100%">
+</p>
 
-The original workspace is not modified by this package.
+<h1 align="center">Language-Guided Sparse Spiking Computation for Seeing Anything</h1>
 
-## Model scope
+<p align="center"><strong>OmniSpike</strong></p>
 
-The retained model path contains:
+### Abstract
 
-- SNN backbone and neck blocks implemented in `ultralytics/nn/modules/yolo_spikformer.py`;
-- the YOLOE SNN detection/segmentation heads in `ultralytics/nn/modules/head.py`;
-- text-conditioned bi-level routing in `ultralytics/nn/modules/text_guided_ser.py`;
-- the model parser and module registration in `ultralytics/nn/tasks.py` and `ultralytics/nn/modules/__init__.py`;
-- the target S-scale configuration with `reg_max: 16`, `end2end: true`, and `text_model: mobileclip2:b`.
+Open-world perception extends object recognition and localisation beyond the category space represented during training. Existing open-world detectors provide such semantic flexibility, but their dense visual processing incurs substantial computational and energy costs. Spiking neural networks offer a sparse, event-driven alternative with the potential for greater efficiency. However, existing spiking neural network detectors remain confined to fixed label spaces, with their sparse activity organised independently of the language-defined target. Open-world perception therefore requires language to guide not only what the model recognises, but also which visual evidence is retained under a fixed computation budget. To bridge this gap, we introduce **OmniSpike**, a directly trained spiking neural network framework that unifies open-world object detection and instance segmentation. OmniSpike incorporates Semantic Evidence Routing (SER), which leverages language guidance to route multi-scale spiking features towards semantically relevant regions while preserving visually plausible candidates. A key-object querying mechanism selects task-relevant evidence for sparse aggregation, refining the shared visual features used for joint object detection and instance segmentation. Extensive experiments show that OmniSpike achieves state-of-the-art performance among directly trained spiking neural network detectors, reaching **51.6** box AP and **42.2** mask AP on COCO and **33.6**/**22.5** box/mask AP on zero-shot LVIS. On event benchmarks, OmniSpike consistently outperforms existing methods in both closed-set instance segmentation and cross-dataset transfer under point and box prompts. OmniSpike extends sparse spiking perception beyond fixed label spaces to open-world detection and instance segmentation.
 
-The P4 and P5 features are directly refined by the text-route module and then shared by the classification, box-regression, and mask-coefficient branches. The Proto branch reads the original P3 feature.
+### Authors
 
-## Repository hygiene
+**Ziqi Li**<sup>1,2</sup>, **Tao Gao**<sup>1,*</sup>, **Shutao Li**<sup>1,*</sup>, **Bochen Zhang**<sup>1</sup>, **Yuanbo Wen**<sup>1</sup>, **Ting Chen**<sup>1</sup>, **Xin Zhang**<sup>2</sup>, **Zeyu Xiao**<sup>2</sup>, **Yuchao Dai**<sup>3</sup>, and **Robby Tan**<sup>2</sup>
 
-This copy contains source code and lightweight configuration only. Local datasets, checkpoints, generated experiment outputs, caches, and unrelated experimental branches are intentionally excluded. The repository is therefore suitable for a fresh GitHub upload.
+<sup>*</sup>Corresponding authors.
 
-The MobileCLIP TorchScript weight is not committed. The existing Ultralytics download mechanism can retrieve `mobileclip2_b.ts` when text encoding is first used.
+1. Chang'an University, Xi'an 710064, China<br>
+2. National University of Singapore, Singapore 117583, Singapore<br>
+3. Northwestern Polytechnical University, Xi'an 710072, China
 
-## Environment
+| Author | Contact |
+|---|---|
+| Ziqi Li | `lzq@chd.edu.cn` |
+| Tao Gao | `gtnwpu@126.com` |
+| Shutao Li | `shutao_li@hnu.edu.cn` |
+| Bochen Zhang | `zbc@chd.edu.cn` |
+| Yuanbo Wen | `wyb@chd.edu.cn` |
+| Ting Chen | `tchenchd@126.com` |
+| Xin Zhang | `x.zhang@u.nus.edu` |
+| Zeyu Xiao | `zeyuxiao1997@163.com` |
+| Yuchao Dai | `daiyuchao@nwpu.edu.cn` |
+| Robby Tan | `robby.tan@nus.edu.sg` |
 
-Use Python 3.10 or 3.11 with a PyTorch build matching the available CPU/CUDA environment.
+## System Requirements
+
+- Python 3.10 or 3.11
+- A PyTorch installation matching the available CPU or CUDA environment
+- A GPU is recommended for training and full-resolution evaluation
+
+## Installation Guide
+
+Install the project and its reviewer-facing dependencies with:
 
 ```powershell
 python -m pip install -e .
 python -m pip install -r requirements-reviewer.txt
 ```
 
-The main package dependencies are defined in `pyproject.toml`; `requirements-reviewer.txt` lists the additional SNN and text-encoding dependencies used by this model path.
+## Usage
 
-## Verify model construction
+### Verify model construction
 
-The following command constructs the exact reviewer configuration without training or writing experiment results:
+The following command constructs the target S-scale configuration and checks the custom head, regression setting,
+end-to-end setting, prediction branches, and Proto output without training:
 
 ```powershell
 python verify_0824_direct_text_route_ser.py
 ```
 
-Expected checks include:
+### Prediction, training, and validation
 
-- the final head is `omnispike_SNNSegment22_2DirectTextRouteSER`;
-- `reg_max == 16`;
-- `end2end == True`;
-- both prediction branches and the Proto output are present.
-
-A small-data training smoke script is also retained at:
-
-`train-segment-snn2-direct-text-route-ser-smoke.py`
-
-It is intended only for a local smoke test after the reviewer supplies the dataset and selects an output directory.
-
-## Predict, train, and val entry points
-
-The reviewer-facing entry points use the included checkpoint by default:
+The reviewer-facing entry points are provided at the repository root:
 
 ```powershell
 python predict.py --source path/to/image.jpg --classes person,car
@@ -66,29 +73,67 @@ python val.py --data path/to/dataset.yaml
 python train.py --data path/to/dataset.yaml --epochs 1
 ```
 
-Their default outputs go to the system temporary directory rather than `runs/`. For an offline code-and-weight smoke test
-without downloading the optional 242 MB MobileCLIP text encoder, add `--offline-smoke` to each command. This mode checks
-the model, checkpoint, data loader, forward pass, validation loop, and one training epoch with deterministic random text
-features; it is not a semantic-accuracy evaluation.
+For an offline code-and-weight smoke test that does not download the optional text encoder, add
+`--offline-smoke` to each command. This mode checks model construction, checkpoint loading, data loading, the forward
+pass, validation, and one training epoch with deterministic random text features; it is not a semantic-accuracy
+evaluation.
 
-## Main files
+The entry points write temporary outputs outside this repository by default. Generated experiment outputs are not part
+of this release.
+
+## Model Configuration
+
+The retained implementation is centered on the S-scale configuration:
+
+`omnispike-text-route-bira-reg16.yaml`
+
+The model keeps the directly trained spiking backbone and neck, the joint detection and instance-segmentation head,
+Semantic Evidence Routing, text-conditioned feature routing, and the parser/registration logic required to construct
+the target network. The P4 and P5 features are refined by the text-route module and shared by the classification,
+box-regression, and mask-coefficient branches, while the Proto branch reads the original P3 feature.
+
+## Project Structure
 
 | Purpose | Path |
 |---|---|
-| Target model configuration | `ultralytics/cfg/models/26/omnispike-text-route-bira-reg16.yaml` |
-| SNN model head | `ultralytics/nn/modules/head.py` |
+| Overview figure | `assets/omnispike_overview.jpg` |
+| Target model configuration | `omnispike-text-route-bira-reg16.yaml` |
+| SNN backbone and neck blocks | `yolo_spikformer.py` |
+| Joint detection and segmentation head | `head.py` |
+| Semantic Evidence Routing | `text_guided_ser.py` |
 | Prediction entry point | `predict.py` |
-| Validation entry point | `val.py` |
 | Training entry point | `train.py` |
-| Reviewer checkpoint | `weights/omnispike-text-route-ser-best.pt` |
-| Text-route SER | `ultralytics/nn/modules/text_guided_ser.py` |
-| SNN backbone/neck blocks | `ultralytics/nn/modules/yolo_spikformer.py` |
-| YAML parser and module registration | `ultralytics/nn/tasks.py` |
-| Smoke training entry point | `train-segment-snn2-direct-text-route-ser-smoke.py` |
+| Validation entry point | `val.py` |
+| Model verification | `verify_0824_direct_text_route_ser.py` |
 | Structural tests | `tests/test_direct_text_route_ser_spikes.py` |
 
-## Reproducibility notes
+## Dataset Link
 
-The data YAMLs in this repository are small smoke-test configurations. Formal COCO/LVIS reproduction requires the reviewer’s own licensed/downloaded datasets and the corresponding checkpoint or training setup. Paths are intentionally not hard-coded to the original local machine.
+The datasets analysed in this study are publicly available from their respective providers:
 
-This project retains the upstream Ultralytics license and notices. Please review the upstream license terms before redistribution.
+- [Objects365](https://www.objects365.org/)
+- [GQA](https://cs.stanford.edu/people/dorarad/gqa/)
+- [Flickr30k Entities](https://bryanplummer.com/Flickr30kEntities/)
+- [LVIS](https://www.lvisdataset.org/dataset)
+- [COCO](https://cocodataset.org/)
+- [DSEC](https://dsec.ifi.uzh.ch/)
+- [Prophesee Gen1 Automotive Detection Dataset](https://www.prophesee.ai/2020/01/24/prophesee-gen1-automotive-detection-dataset/)
+
+Preprocessed DDD17-Seg and DSEC-Semantic data, Mixed-24K training pairs, and the DDD17-Ins, DSEC11-Ins, and
+DSEC19-Ins benchmarks are accessible through the [SEAL data-preparation instructions](https://github.com/0nandon/SEAL#data-preparation).
+
+Access to each dataset is subject to the terms specified by its provider. The processed numerical data underlying the
+tables and figures will be provided as Source Data with the published article.
+
+## Reproducibility Notes
+
+The data YAMLs included in this repository are lightweight smoke-test configurations. Formal COCO/LVIS reproduction
+requires the reviewer’s own licensed or downloaded datasets and the corresponding checkpoint or training setup.
+Paths are intentionally not hard-coded to the original local machine.
+
+The repository is a clean reviewer-facing copy: local datasets, generated experiment outputs, caches, and unrelated
+experimental branches are excluded.
+
+## License
+
+See `LICENSE` for the applicable license and notices.
