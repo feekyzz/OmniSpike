@@ -81,6 +81,10 @@ evaluation.
 The entry points write temporary outputs outside this repository by default. Generated experiment outputs are not part
 of this release.
 
+## Weights
+
+The pretrained OmniSpike weights can be downloaded from [Google Drive](https://drive.google.com/file/d/1AY8dCsL_1-RV-vStaYOe6D74Y5COflP1/view?usp=drive_link).
+
 ## Model Configuration
 
 The retained implementation is centered on the S-scale configuration:
