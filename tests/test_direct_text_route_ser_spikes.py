@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 os.environ.setdefault("YOLO_CONFIG_DIR", str(ROOT / ".yolo_config"))
 
 from ultralytics import YOLOE  # noqa: E402
-from ultralytics.nn.modules.head import YOLOESNNSegment22_2, YOLOESNNSegment22_2DirectTextRouteSER  # noqa: E402
+from ultralytics.nn.modules.head import YOLOESNNSegment22_2, omnispike_SNNSegment22_2DirectTextRouteSER  # noqa: E402
 from ultralytics.nn.modules.yolo_spikformer import MS_StandardConv, SpikeConv, SpikeConvWithoutBN  # noqa: E402
 
 
@@ -28,7 +28,7 @@ def audit_direct_text_route_ser_spikes(model_source: str | Path) -> dict[str, ob
     wrapper = YOLOE(model_source, task="segment", verbose=False)
     core = wrapper.model
     head = core.model[-1]
-    assert isinstance(head, YOLOESNNSegment22_2DirectTextRouteSER)
+    assert isinstance(head, omnispike_SNNSegment22_2DirectTextRouteSER)
     assert head.__class__.__bases__ == (YOLOESNNSegment22_2,)
     assert not hasattr(head.direct_text_ser, "p4_scale_logit")
     assert not hasattr(head.direct_text_ser, "p5_scale_logit")

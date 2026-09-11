@@ -2,7 +2,7 @@
 
 This repository is a clean reviewer-facing copy of the YOLOE-26 SNN instance-segmentation implementation centered on the S-scale configuration:
 
-`ultralytics/cfg/models/26/yoloe-26s-0824-direct-text-route-ser-reg16.yaml`
+`ultralytics/cfg/models/26/omnispike-text-route-bira-reg16.yaml`
 
 The original workspace is not modified by this package.
 
@@ -45,7 +45,7 @@ python verify_0824_direct_text_route_ser.py
 
 Expected checks include:
 
-- the final head is `YOLOESNNSegment22_2DirectTextRouteSER`;
+- the final head is `omnispike_SNNSegment22_2DirectTextRouteSER`;
 - `reg_max == 16`;
 - `end2end == True`;
 - both prediction branches and the Proto output are present.
@@ -60,7 +60,7 @@ It is intended only for a local smoke test after the reviewer supplies the datas
 
 | Purpose | Path |
 |---|---|
-| Target model configuration | `ultralytics/cfg/models/26/yoloe-26s-0824-direct-text-route-ser-reg16.yaml` |
+| Target model configuration | `ultralytics/cfg/models/26/omnispike-text-route-bira-reg16.yaml` |
 | SNN model head | `ultralytics/nn/modules/head.py` |
 | Text-route SER | `ultralytics/nn/modules/text_guided_ser.py` |
 | SNN backbone/neck blocks | `ultralytics/nn/modules/yolo_spikformer.py` |

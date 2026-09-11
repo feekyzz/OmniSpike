@@ -8,10 +8,10 @@ import torch
 os.environ.setdefault("YOLO_CONFIG_DIR", str(Path(__file__).resolve().parent / ".reviewer_config"))
 
 from ultralytics import YOLOE
-from ultralytics.nn.modules.head import YOLOESNNSegment22_2DirectTextRouteSER
+from ultralytics.nn.modules.head import omnispike_SNNSegment22_2DirectTextRouteSER
 
 
-MODEL_YAML = Path(__file__).resolve().parent / "ultralytics/cfg/models/26/yoloe-26s-0824-direct-text-route-ser-reg16.yaml"
+MODEL_YAML = Path(__file__).resolve().parent / "ultralytics/cfg/models/26/omnispike-text-route-bira-reg16.yaml"
 
 
 def main() -> None:
@@ -19,7 +19,7 @@ def main() -> None:
     core = wrapper.model
     head = core.model[-1]
 
-    assert isinstance(head, YOLOESNNSegment22_2DirectTextRouteSER)
+    assert isinstance(head, omnispike_SNNSegment22_2DirectTextRouteSER)
     assert head.reg_max == 16
     assert head.end2end is True
 

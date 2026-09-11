@@ -92,7 +92,7 @@ from ultralytics.nn.modules import (
     YOLOESNNSegment22_2ResidualTextSER,
     YOLOESNNSegment22_2SafeTextRouteSER,
     YOLOESNNSegment22_2SharedTextRouteSER,
-    YOLOESNNSegment22_2DirectTextRouteSER,
+    omnispike_SNNSegment22_2DirectTextRouteSER,
     YOLOESNNSegment2TextGuidedSER,
     YOLOESNNDetect3,
     YOLOESegment,
@@ -1076,7 +1076,7 @@ class YOLOEModel(DetectionModel):
                 YOLOESNNSegment22_2ResidualTextSER,
                 YOLOESNNSegment22_2SafeTextRouteSER,
                 YOLOESNNSegment22_2SharedTextRouteSER,
-                YOLOESNNSegment22_2DirectTextRouteSER,
+                omnispike_SNNSegment22_2DirectTextRouteSER,
                 YOLOESNNSegment2TextGuidedSER,
                 YOLOESNNDetect3,
             ),
@@ -1121,7 +1121,7 @@ class YOLOEModel(DetectionModel):
                 YOLOESNNSegment22_2ResidualTextSER,
                 YOLOESNNSegment22_2SafeTextRouteSER,
                 YOLOESNNSegment22_2SharedTextRouteSER,
-                YOLOESNNSegment22_2DirectTextRouteSER,
+                omnispike_SNNSegment22_2DirectTextRouteSER,
                 YOLOESNNSegment2TextGuidedSER,
                 YOLOESNNDetect3,
             ),
@@ -1174,7 +1174,7 @@ class YOLOEModel(DetectionModel):
                 YOLOESNNSegment22_2ResidualTextSER,
                 YOLOESNNSegment22_2SafeTextRouteSER,
                 YOLOESNNSegment22_2SharedTextRouteSER,
-                YOLOESNNSegment22_2DirectTextRouteSER,
+                omnispike_SNNSegment22_2DirectTextRouteSER,
                 YOLOESNNSegment2TextGuidedSER,
                 YOLOESNNDetect3,
             ),
@@ -1270,7 +1270,7 @@ class YOLOEModel(DetectionModel):
                     YOLOESNNSegment22_2ResidualTextSER,
                     YOLOESNNSegment22_2SafeTextRouteSER,
                     YOLOESNNSegment22_2SharedTextRouteSER,
-                    YOLOESNNSegment22_2DirectTextRouteSER,
+                    omnispike_SNNSegment22_2DirectTextRouteSER,
                     YOLOESNNSegment2TextGuidedSER,
                     YOLOESNNDetect3,
                 ),
@@ -1783,7 +1783,7 @@ def parse_model(d, ch, verbose=True):
                 YOLOESNNSegment22_2ResidualTextSER,
                 YOLOESNNSegment22_2SafeTextRouteSER,
                 YOLOESNNSegment22_2SharedTextRouteSER,
-                YOLOESNNSegment22_2DirectTextRouteSER,
+                omnispike_SNNSegment22_2DirectTextRouteSER,
                 YOLOESNNSegment2TextGuidedSER,
                 YOLOESNNDetect2TextGuidedSER,
                 YOLOESNNDetect3,
@@ -1819,7 +1819,7 @@ def parse_model(d, ch, verbose=True):
                 YOLOESNNSegment22_2ResidualTextSER,
                 YOLOESNNSegment22_2SafeTextRouteSER,
                 YOLOESNNSegment22_2SharedTextRouteSER,
-                YOLOESNNSegment22_2DirectTextRouteSER,
+                omnispike_SNNSegment22_2DirectTextRouteSER,
                 YOLOESNNSegment2TextGuidedSER,
             }:
                 args[2] = make_divisible(min(args[2], max_channels) * width, 8)
@@ -1837,7 +1837,7 @@ def parse_model(d, ch, verbose=True):
                 YOLOESNNSegment22_2ResidualTextSER,
                 YOLOESNNSegment22_2SafeTextRouteSER,
                 YOLOESNNSegment22_2SharedTextRouteSER,
-                YOLOESNNSegment22_2DirectTextRouteSER,
+                omnispike_SNNSegment22_2DirectTextRouteSER,
                 YOLOESNNSegment2TextGuidedSER,
                 YOLOESNNDetect2TextGuidedSER,
                 YOLOESNNDetect3,
@@ -1947,8 +1947,10 @@ def guess_model_scale(model_path):
     Returns:
         (str): The size character of the model's scale (n, s, m, l, or x).
     """
+    if Path(model_path).stem == "omnispike-text-route-bira-reg16":
+        return "s"
     try:
-        return re.search(r"yolo(e-)?[v]?\d+([nslmx])", Path(model_path).stem).group(2)
+        return re.search(r"(?:yolo(e-)?[v]?\d+|omnispike-\d+)([nslmx])", Path(model_path).stem).group(2)
     except AttributeError:
         return ""
 
@@ -2003,7 +2005,7 @@ def guess_model_task(model):
                     YOLOESNNSegment22_2ResidualTextSER,
                     YOLOESNNSegment22_2SafeTextRouteSER,
                     YOLOESNNSegment22_2SharedTextRouteSER,
-                    YOLOESNNSegment22_2DirectTextRouteSER,
+                    omnispike_SNNSegment22_2DirectTextRouteSER,
                     YOLOESNNSegment2TextGuidedSER,
                 ),
             ):

@@ -43,7 +43,7 @@ __all__ = (
     "YOLOESNNSegment22_2ResidualTextSER",
     "YOLOESNNSegment22_2SafeTextRouteSER",
     "YOLOESNNSegment22_2SharedTextRouteSER",
-    "YOLOESNNSegment22_2DirectTextRouteSER",
+    "omnispike_SNNSegment22_2DirectTextRouteSER",
     "YOLOESNNSegment2TextGuidedSER",
     "YOLOESNNDetect3",
     "YOLOESegment",
@@ -3073,7 +3073,7 @@ class DirectSafeTextRouteEnhancer(nn.Module):
         return [p3, p4_guided, p5_guided]
 
 
-class YOLOESNNSegment22_2DirectTextRouteSER(YOLOESNNSegment22_2):
+class omnispike_SNNSegment22_2DirectTextRouteSER(YOLOESNNSegment22_2):
     """0603式双尺度Text-SER：P4/P5经Attention和MS_ConvBlock后直接进入共享Head。"""
 
     def __init__(
