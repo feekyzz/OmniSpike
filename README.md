@@ -8,7 +8,6 @@
 
 <h1 align="center">Language-Guided Sparse Spiking Computation for Seeing Anything</h1>
 
-<p align="center"><strong>OmniSpike</strong></p>
 
 ### Abstract
 
