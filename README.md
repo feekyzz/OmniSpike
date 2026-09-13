@@ -24,19 +24,6 @@ Open-world perception extends object recognition and localisation beyond the cat
 2. National University of Singapore, Singapore 117583, Singapore<br>
 3. Northwestern Polytechnical University, Xi'an 710072, China
 
-| Author | Contact |
-|---|---|
-| Ziqi Li | `lzq@chd.edu.cn` |
-| Tao Gao | `gtnwpu@126.com` |
-| Shutao Li | `shutao_li@hnu.edu.cn` |
-| Bochen Zhang | `zbc@chd.edu.cn` |
-| Yuanbo Wen | `wyb@chd.edu.cn` |
-| Ting Chen | `tchenchd@126.com` |
-| Xin Zhang | `x.zhang@u.nus.edu` |
-| Zeyu Xiao | `zeyuxiao1997@163.com` |
-| Yuchao Dai | `daiyuchao@nwpu.edu.cn` |
-| Robby Tan | `robby.tan@nus.edu.sg` |
-
 ## System Requirements
 
 - Python 3.10 or 3.11
@@ -85,7 +72,7 @@ of this release.
 
 The pretrained OmniSpike weights can be downloaded from [Google Drive](https://drive.google.com/file/d/1AY8dCsL_1-RV-vStaYOe6D74Y5COflP1/view?usp=drive_link).
 
-下载完成后，请将 `.pt` 权重文件直接拖入本项目的 `weights/` 文件夹，并将文件名保持为：
+After downloading, place the `.pt` checkpoint in the project's `weights/` directory and keep the following filename:
 
 `omnispike-text-route-ser-best.pt`
 
@@ -139,7 +126,7 @@ tables and figures will be provided as Source Data with the published article.
 ## Reproducibility Notes
 
 The data YAMLs included in this repository are lightweight smoke-test configurations. Formal COCO/LVIS reproduction
-requires the reviewer’s own licensed or downloaded datasets and the corresponding checkpoint or training setup.
+requires the user's own licensed or downloaded datasets and the corresponding checkpoint or training setup.
 Paths are intentionally not hard-coded to the original local machine.
 
 The repository is a clean reviewer-facing copy: local datasets, generated experiment outputs, caches, and unrelated
